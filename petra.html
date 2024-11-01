@@ -14,6 +14,7 @@
         You can either answer some preset questions or, if you would like too,
         create a couple of more questions!
       </p>
+      <p><a href="create.html" class="link">Create new questions</a></p>
       <hr />
     </header>
     <main>
@@ -62,9 +63,12 @@
       </form>
 
       <article class="quiz-container">
+        <p class="if-disabled">
+          Please fill in the information above to access the quiz
+        </p>
         <h1>Quiz</h1>
         <form id="quiz-form">
-          <fieldset>
+          <fieldset id="quiz-fieldset" disabled>
             <div class="question-container" id="question-container">
               <!-- question and anwswer divs will be added here with JS-->
             </div>
