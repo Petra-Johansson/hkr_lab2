@@ -4,28 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Lab 2 - Quiz" />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="style.css" />
     <title>Quiz website</title>
   </head>
   <body>
-    <main>
+    <header>
       <h1>Welcome to my Quiz-site!</h1>
       <p>
         You can either answer some preset questions or, if you would like too,
         create a couple of more questions!
       </p>
-
+      <hr />
+    </header>
+    <main>
       <form class="information-form">
         <fieldset>
-          <legend>Please fill in this information:</legend>
+          <legend>Please fill in this information to get started:</legend>
           <div class="form-group">
-            <label for="f-name"></label>
-            <input type="text" name="f-name" id="f-name" placeholder=Firstname"
-            pattern="[A-Za-z]{2,20}" required />
-            <span class="required-marker">*</span>
+            <label for="f-name"
+              >First name <span class="required-marker">*</span></label
+            >
+            <input
+              type="text"
+              name="f-name"
+              id="f-name"
+              placeholder="Firstname"
+              pattern="[A-Za-z]{2,20}"
+              required
+            />
           </div>
           <div class="form-group">
-            <label for="l-name"></label>
+            <label for="l-name"
+              >Last name <span class="required-marker">*</span></label
+            >
             <input
               type="text"
               name="l-name"
@@ -34,10 +45,11 @@
               pattern="[A-Za-z]{4,20}"
               required
             />
-            <span class="required-marker">*</span>
           </div>
           <div class="form-group">
-            <label for="email"></label>
+            <label for="email"
+              >E-mail <span class="required-marker">*</span></label
+            >
             <input
               type="email"
               name="email"
@@ -45,17 +57,25 @@
               placeholder="you@email.com"
               required
             />
-            <span class="required-marker">*</span>
           </div>
         </fieldset>
       </form>
 
       <article class="quiz-container">
         <h1>Quiz</h1>
-        <div class="question-container" id="question-container">
-          <!-- question and anwswer divs will be added with JS-->
-        </div>
+        <form id="quiz-form">
+          <fieldset>
+            <div class="question-container" id="question-container">
+              <!-- question and anwswer divs will be added here with JS-->
+            </div>
+            <button type="submit" class="submit-btn">Submit answers</button>
+          </fieldset>
+        </form>
       </article>
+
+      <div class="result-container">
+        <h3>Your result:</h3>
+      </div>
     </main>
 
     <script src="./petra.js"></script>
