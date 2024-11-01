@@ -1,0 +1,29 @@
+{
+    "questions": [
+    {
+        "question": "1",
+        "options": ["Nej","Ja","Kanske","Tveksamt"],
+        "correct": "Ja"
+    },
+    {
+        "question": "2",
+        "options": ["1","2","4","8"],
+        "correct": ["4", "8"]
+    },
+    {
+        "question": "3",
+        "options": ["Stockholm","Malmö","Ystad","Happaranda"],
+        "correct": "Ystad"
+    },
+    {
+        "question": "4",
+        "options": ["Moln","Regn","Sol","Åska"],
+        "correct": "Sol"
+    },
+    {
+        "question": "5",
+        "options": [],
+        "correct": ["Julafton"]
+    }
+]
+}
