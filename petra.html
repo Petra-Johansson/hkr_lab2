@@ -17,69 +17,71 @@
       <p><a href="create.html" class="link">Create new questions</a></p>
       <hr />
     </header>
-    <main>
-      <form class="information-form">
-        <fieldset>
-          <legend>Please fill in this information to get started:</legend>
-          <div class="form-group">
-            <label for="f-name"
-              >First name <span class="required-marker">*</span></label
-            >
-            <input
-              type="text"
-              name="f-name"
-              id="f-name"
-              placeholder="Firstname"
-              pattern="[A-Za-z]{2,20}"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="l-name"
-              >Last name <span class="required-marker">*</span></label
-            >
-            <input
-              type="text"
-              name="l-name"
-              id="l-name"
-              placeholder="Lastname"
-              pattern="[A-Za-z]{4,20}"
-              required
-            />
-          </div>
-          <div class="form-group">
-            <label for="email"
-              >E-mail <span class="required-marker">*</span></label
-            >
-            <input
-              type="email"
-              name="email"
-              id="email"
-              placeholder="you@email.com"
-              required
-            />
-          </div>
-        </fieldset>
-      </form>
-
-      <article class="quiz-container">
-        <p class="if-disabled">
-          Please fill in the information above to access the quiz
-        </p>
-        <h1>Quiz</h1>
-        <form id="quiz-form">
-          <fieldset id="quiz-fieldset" disabled>
-            <div class="question-container" id="question-container">
-              <!-- question and anwswer divs will be added here with JS-->
+    <main class="main">
+      <div class="form-wrapper">
+        <form class="information-form">
+          <fieldset>
+            <legend>Please fill in this information to get started:</legend>
+            <div class="form-group">
+              <label for="f-name"
+                >First name <span class="required-marker">*</span></label
+              >
+              <input
+                type="text"
+                name="f-name"
+                id="f-name"
+                placeholder="Firstname"
+                pattern="[A-Za-z]{2,20}"
+                required
+              />
             </div>
-            <button type="submit" class="submit-btn">Submit answers</button>
+            <div class="form-group">
+              <label for="l-name"
+                >Last name <span class="required-marker">*</span></label
+              >
+              <input
+                type="text"
+                name="l-name"
+                id="l-name"
+                placeholder="Lastname"
+                pattern="[A-Za-z]{4,20}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="email"
+                >E-mail <span class="required-marker">*</span></label
+              >
+              <input
+                type="email"
+                name="email"
+                id="email"
+                placeholder="you@email.com"
+                required
+              />
+            </div>
           </fieldset>
         </form>
-      </article>
 
-      <div class="result-container">
-        <h3>Your result:</h3>
+        <article class="quiz-container">
+          <h1>Quiz</h1>
+          <form id="quiz-form">
+            <fieldset id="quiz-fieldset" disabled>
+              <div class="question-container" id="question-container">
+                <!-- question and anwswer divs will be added here with JS-->
+              </div>
+              <button type="submit" class="submit-btn">Submit answers</button>
+            </fieldset>
+          </form>
+        </article>
+
+        <div class="result-container">
+          <!-- Result is loaded via JS -->
+        </div>
       </div>
+      <aside class="leader-board" id="leader-board">
+        <!-- Leaderboard i loaded via JS -->
+      </aside>
     </main>
 
     <script src="./petra.js"></script>

@@ -17,12 +17,14 @@ html {
   font-size: 16px;
 }
 body {
+  /*
   background-image: linear-gradient(
     to bottom right,
     var(--purple),
     var(--primary-light),
     var(--purple)
-  );
+  );*/
+  background-color: var(--primary-light);
   overflow-x: hidden;
 }
 
@@ -35,7 +37,10 @@ header {
     margin-bottom: 1em;
   }
 }
-
+h2,
+h3 {
+  font-weight: 500;
+}
 a,
 button,
 input[type="checkbox"],
@@ -46,7 +51,17 @@ input[type="radio"] {
 fieldset {
   border: none;
 }
+fieldset:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
 
+.main {
+  display: grid;
+  grid-template-columns: 60% 40%;
+  gap: 2em;
+  width: 90%;
+}
 .link {
   padding: 1em;
   color: var(--cta);
@@ -55,7 +70,12 @@ fieldset {
 .link:hover {
   font-size: 1.2em;
 }
-
+.error-message {
+  color: red;
+  margin: 1em;
+  padding: 1em;
+}
+/* FORM and QUIZ */
 .information-form,
 .quiz-container,
 .result-container {
@@ -103,4 +123,30 @@ input {
 .submit-btn:hover {
   background-color: var(--primary-light);
   color: var(--cta);
+}
+
+/* RESULT and LEADERBOARD */
+.leader-board {
+  background: var(--purple);
+  color: var(--primary-light);
+  padding: 2em;
+
+  h3 {
+    text-transform: uppercase;
+  }
+
+  .board-details {
+    margin-top: 1.5em;
+    text-transform: uppercase;
+    display: grid;
+    grid-template-columns: 60% auto;
+    border-bottom: 1px solid var(--primary-light);
+  }
+}
+
+.leaderboard-div {
+  display: grid;
+  grid-template-columns: 60% auto;
+  margin-top: 1em;
+  text-transform: capitalize;
 }
