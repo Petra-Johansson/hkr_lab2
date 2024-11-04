@@ -7,6 +7,13 @@ const quizFieldset = document.getElementById("quiz-fieldset");
 const quizForm = document.getElementById("quiz-form");
 let questionData = [];
 
+ leaderBoard();
+
+fNameInput.addEventListener("input", formValidation);
+lNameInput.addEventListener("input", formValidation);
+emailInput.addEventListener("input", formValidation);
+
+fetchQuestions();
 
 function fetchQuestions() {
     fetch('./questions.json')
@@ -18,6 +25,43 @@ function fetchQuestions() {
     .catch((error) => console.log("Could not fetch data:", error));
 };
 
+// function to display errorMessages where needed
+function showErrorMessage(container, message) {
+    let errorMessage = container.querySelector(".error-message");
+
+    if(!errorMessage) {
+        errorMessage = document.createElement("p");
+        errorMessage.classList.add("error-message");
+        container.appendChild(errorMessage);
+    }
+
+    errorMessage.innerText = message;
+    errorMessage.style.display =  "block";
+}
+
+function hideError(container) {
+    const errorMessage = container.querySelector(".error-message");
+    if(errorMessage) {
+     errorMessage.style.display = "none";
+        }
+}
+
+function maxSelection(questionIndex, maxSel, answersDiv) {
+    const checkboxes = document.querySelectorAll(`input[name="question${questionIndex}"]`);
+    checkboxes.forEach((checkbox) => {
+        const selectedBoxes = Array.from(checkboxes).filter(box => box.checked);
+        
+        if(selectedBoxes.length > maxSel) {
+            checkbox.checked = false;
+            showErrorMessage(answersDiv, `Max amount to select is ${maxSel}`);
+        } else {
+           hideError(answersDiv);
+        }
+    });
+}
+
+
+// show all questions and apply correct type of element
 function displayQuestions(questions) {
     const questionContainer = document.getElementById("question-container");
     questionContainer.innerHTML = '';
@@ -46,6 +90,7 @@ function displayQuestions(questions) {
         // setting the input type. 
         // if "correct" answers is fetched as an array, set type to checkbox = multiple answers
         // if not, it's considerd a single choice questions = radiobutton
+        // the option is shown as a string from TextNode
             input.type = Array.isArray(questionObject.correct) ? "checkbox" : "radio";
             input.name = `question${index}`;
             input.value = option;
@@ -54,6 +99,11 @@ function displayQuestions(questions) {
             label.appendChild(document.createTextNode(option));
             answersDiv.appendChild(label);
         }); 
+
+        // call maxSelection function and set 2 to maxSel
+        if (Array.isArray(questionObject.correct)) {
+            maxSelection(index, 2, answersDiv);
+        }
     } else {
         //if correct anwser is fetched as an empty array we set it to be an open ended text entry = text
         const input = document.createElement("input");
@@ -69,15 +119,40 @@ function displayQuestions(questions) {
 }
 
 function formValidation() {
-    if (fNameInput.checkValidity() && lNameInput.checkValidity() && emailInput.checkValidity() ) {
-        quizFieldset.disabled = false;
-    } else {
-        quizFieldset.disabled = true;
+    
+    let isValid = true;
+
+    if(!fNameInput.value.trim()) {
+        showErrorMessage(fNameInput.parentElement, "First name is required.");
+        isValid = false;
+    } else{
+        hideError(fNameInput.parentElement);
     }
+    if(!lNameInput.value.trim()) {
+        showErrorMessage(lNameInput.parentElement, "Last name is required.");
+        isValid = false;
+    } else{
+        hideError(lNameInput.parentElement);
+    }
+    if(!emailInput.value.trim()) {
+        showErrorMessage(emailInput.parentElement, "Email is required.");
+        isValid = false;
+    } else{
+        hideError(emailInput.parentElement);
+    }
+    
+    quizFieldset.disabled = !isValid;
+    return isValid;
 }
 
 quizForm.addEventListener("submit", function(event) {
     event.preventDefault();
+
+    // check that the information form is valid
+    if (!formValidation()) {
+        console.log("Form is not valid, submit is blocked.");
+        return;
+    }
 
     const userInfo = {
        firstName: fNameInput.value,
@@ -85,44 +160,44 @@ quizForm.addEventListener("submit", function(event) {
        email: emailInput.value,
     };
 
+    // collect information about the users choices for each question
     const quizAnswers = {};
-    const questions = document.querySelectorAll(".question-container .question");
+    const questions = document.querySelectorAll(".question");
 
     questions.forEach((question, index) => {
         const selectedOpts = [];
         const inputs = question.querySelectorAll("input");
 
-        inputs.forEach((input) => {
-            if (input.type === "radio" || input.type === "checkbox") {
-                if (input.checked) selectedOpts.push(input.value);
-            } else if (input.type === "text") {
+   inputs.forEach((input) => {
+            if (input.checked || (input.type === "text" && input.value.trim())) {
                 selectedOpts.push(input.value.trim());
             }
         });
-
         quizAnswers[`question${index + 1}`] = selectedOpts;
     });
 
-
-    //save result from quiz
+    //save result from quiz in result-object
     const result = {
         userInfo: userInfo,
         answers: quizAnswers,
         timestamp: new Date().toISOString(),
     };
 
-  
+    // save the result in localStorage to be able to access and 
+    //handle in showResult() 
     let quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
     quizResults.push(result);
     localStorage.setItem("quizResults", JSON.stringify(quizResults));
 
     showResult(result);
 
+    //resetting the quiz and form for another user
     quizForm.reset();
     document.querySelector(".information-form").reset();
     quizFieldset.disabled = true;
 });
 
+// Show result of the quiz
 function showResult(result) {
     const resultContainer = document.querySelector(".result-container");
     let score = 0;
@@ -133,28 +208,83 @@ function showResult(result) {
     
     
     if (Array.isArray(correctAnswer)) {
-        if (usersAnswer && JSON.stringify(correctAnswer.sort()) === JSON.stringify(usersAnswer)) {
-            score++;
+        let multiChoiceScore = 0;
+
+        if (usersAnswer){
+            usersAnswer.forEach((answer) => {
+                if (correctAnswer.includes(answer)) {
+                    multiChoiceScore++;
+                }
+            });
         }
+        //max points is set to 2 (equals to the max amount choices user can make)
+        score += Math.min(multiChoiceScore, 2)
+
     } else {
         if (usersAnswer && usersAnswer[0] === correctAnswer) {
             score++;
+            }
         }
-    }
-});
+    });
+    //add the score to the result-object
+    result.score = score;
 
+    // update QuizResult with the score (to be able to show a leaderBoard / compare results)
+    let quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
+    quizResults[quizResults.length - 1] = result;
+    localStorage.setItem("quizResults", JSON.stringify(quizResults));
 
     resultContainer.innerHTML =`
+    <h2>Your result:</h2>
     <h3>${result.userInfo.firstName} ${result.userInfo.lastName}</h3>
     <p>You got ${score} correct out of ${questionData.length} questions!</p>
     <p>Date: ${new Date(result.timestamp).toLocaleDateString()}</p>
     `;
+
 }
 
-fNameInput.addEventListener("input", formValidation);
-lNameInput.addEventListener("input", formValidation);
-emailInput.addEventListener("input", formValidation);
+function leaderBoard() {
+        let quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
 
-fetchQuestions();
+    
+        const leaderBoard = document.getElementById("leader-board");
+        leaderBoard.innerHTML = '';
+        
+        const leaderBoardTitle = document.createElement("h3");
+        leaderBoardTitle.innerText = "Leaderboard";
+        leaderBoard.appendChild(leaderBoardTitle);
+
+
+        const boardDetails = document.createElement("p");
+        boardDetails.classList.add("board-details");
+        boardDetails.innerText = "Name";
+        leaderBoard.appendChild(boardDetails);
+
+        const scoreSpan = document.createElement("span");
+        scoreSpan.innerText = "Score";
+        boardDetails.appendChild(scoreSpan);
+
+        // sort the result from highest to lowest score
+        quizResults.sort((a, b) => b.score - a.score);
+
+        quizResults.forEach((result) => {
+            const userDiv = document.createElement("div");
+            userDiv.classList.add("leaderboard-div");
+
+            const userName = document.createElement("p");
+            userName.classList.add("user-name");
+            userName.innerText = `${result.userInfo.firstName} ${result.userInfo.lastName}`;
+            userDiv.appendChild(userName); 
+
+            const userScore = document.createElement("p");
+            userScore.classList.add("user-score");
+            userScore.innerText = `${result.score}`;
+            userDiv.appendChild(userScore); 
+
+            leaderBoard.appendChild(userDiv);
+        })
+
+    
+}
 
 });
