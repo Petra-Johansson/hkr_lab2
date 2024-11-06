@@ -285,6 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function showResult(result) {
         const resultContainer = document.querySelector(".result-container");
         let score = 0;
+        let maxScore = 0;
 
         questionData.forEach((question, index) => {
             const usersAnswer = result.answers[`question${index + 1}`];
@@ -292,14 +293,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const questionDiv = document.querySelectorAll(".question")[index];
             const inputs = questionDiv.querySelectorAll("input");
 
-            inputs.forEach((input, index) => {
-                console.log(`Input ${index + 1} Details:`);
-                console.log(`  Type: ${input.type}`);
-                console.log(`  Name: ${input.name}`);
-                console.log(`  Value: ${input.value}`);
-            });
+            if (Array.isArray(correctAnswer)) {
+                // For multiple-choice questions with multiple correct answers
+                maxScore += correctAnswer.length; // Increment by the number of correct options
+            } else {
+                // For single-choice or text input questions
+                maxScore += 1; // Increment by 1 for each question
+            }
 
             if (Array.isArray(correctAnswer)) {
+
                 // Handle multiple-choice questions (checkboxes)
                 let multiChoiceScore = 0;
                 if (usersAnswer) {
@@ -375,6 +378,7 @@ document.addEventListener("DOMContentLoaded", () => {
             inputs.forEach(input => {
                 if (input.type === "radio") {
                     const label = input.parentElement;
+
                     if (input.value === correctAnswer) {
                         label.classList.add("correct");
                         if (input.checked) {
@@ -415,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
         resultContainer.innerHTML = `
     <h2>Your result:</h2>
     <h3>${result.userInfo.firstName} ${result.userInfo.lastName}</h3>
-    <p>You got ${score} correct out of ${questionData.length} questions!</p>
+    <p>You got ${score} points out of maxmimum: ${maxScore}, by answering all ${questionData.length} questions!</p>
     <p>Date: ${new Date(result.timestamp).toLocaleDateString()}</p>
     `;
 
