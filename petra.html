@@ -96,44 +96,56 @@
         <!-- Leaderboard i loaded via JS -->
       </aside>
 
-      <article id="create">
+      <article id="create" class="create-article">
         <h2>Add a new question to the quiz</h2>
         <form class="question-form" id="question-form">
-          <label for="question-type">Choose question type:</label>
-          <select id="question-type">
-            <option value="radio">Radiobutton (Single choice)</option>
-            <option value="checkbox">Checkbox (Multiple answers)</option>
-            <option value="text">Open-ended (Text input)</option>
-          </select>
-
-          <label for="question-text">Write the Question:</label>
-          <input
-            type="text"
-            id="question-text"
-            name="question-text"
-            required
-            placeholder="Question?"
-          />
-          <div id="options-container" style="display: none">
-            <label for="option-text">Option:</label>
-            <input type="text" id="option-text" />
-            <button type="button" id="add-option">Add Option</button>
-          </div>
-          <div id="options-list"></div>
-
-          <label for="correct-answer">Correct Answer(s):</label>
-          <input
-            type="text"
-            id="correct-answer"
-            placeholder="Enter correct answer(s)"
-            required
-          />
-
-          <button type="submit">Add Question</button>
+          <fieldset>
+            <div class="form-group">
+              <label for="question-type">Choose question type:</label>
+              <select id="question-type">
+                <option value="radio">Radiobutton (Single choice)</option>
+                <option value="checkbox">Checkbox (Multiple answers)</option>
+                <option value="text">Open-ended (Text input)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="question-text">Write the Question:</label>
+              <input
+                type="text"
+                id="question-text"
+                name="question-text"
+                required
+                placeholder="Question?"
+              />
+            </div>
+            <div class="form-group">
+              <div id="options-container" style="display: none">
+                <label for="option-text">Option:</label>
+                <input type="text" id="option-text" />
+                <button type="button" id="add-option">Add Option</button>
+              </div>
+              <div id="options-list"></div>
+            </div>
+            <div class="form-group">
+              <label for="correct-answer">Correct Answer(s):</label>
+              <input
+                type="text"
+                id="correct-answer"
+                placeholder="Enter correct answer(s)"
+                required
+              />
+            </div>
+            <button type="submit" class="submit-btn">Add Question</button>
+          </fieldset>
         </form>
       </article>
     </main>
-
+    <footer class="footer">
+      <a href="https://github.com/Petra-Johansson/hkr_lab2" class="link"
+        >Find this repo on GitHub</a
+      >
+      <p class="copyright">Copyright &#169; by me, Petra, 2024</p>
+    </footer>
     <script src="./petra.js"></script>
   </body>
 </html>

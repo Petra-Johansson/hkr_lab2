@@ -1,7 +1,7 @@
 :root {
   --primary-dark: #333;
   --primary-light: #e8f1f9;
-  --purple: rgba(72, 44, 72, 0.758);
+  --purple: rgba(109, 68, 109, 0.758);
   --blue: rgb(134, 189, 228);
   --warning: rgb(172, 1, 1);
   --green: rgb(11, 102, 11);
@@ -21,8 +21,8 @@ html {
 body {
   background-image: linear-gradient(
     to bottom right,
-    var(--blue),
-    var(--primary-light)
+    var(--primary-light),
+    var(--purple)
   );
   overflow-x: hidden;
 }
@@ -65,6 +65,7 @@ legend {
   grid-template-columns: 60% 40%;
   gap: 2em;
   width: 90%;
+  margin-bottom: 2em;
 }
 .link {
   padding: 1em;
@@ -87,7 +88,8 @@ legend {
 /* FORM and QUIZ */
 .information-form,
 .quiz-container,
-.result-container {
+.result-container,
+.create-article {
   width: 70%;
   margin: 1em auto;
 }
@@ -98,7 +100,8 @@ legend {
   flex-direction: column;
   margin: 1.5em 0;
 }
-input {
+input,
+select {
   padding: 0.5em;
   font-size: 1.2em;
   max-width: 50ch;
@@ -198,10 +201,22 @@ input {
 }
 
 /* to add question */
-.question-form {
+.create-article {
+  h2 {
+    margin-bottom: 0.8em;
+  }
+
+  label {
+    margin: 0.6em 0;
+    font-size: 1em;
+  }
+}
+.footer {
   display: flex;
   flex-direction: column;
-  width: 70%;
+  align-items: center;
+  padding: 1em;
+  border-top: 1px solid var(--primary-dark);
 }
 
 @media only screen and (max-width: 800px) {
