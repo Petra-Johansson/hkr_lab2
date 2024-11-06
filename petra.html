@@ -18,7 +18,7 @@
         You can either answer some preset questions or, if you would like too,
         create a couple of more questions!
       </p>
-      <p><a href="create.html" class="link">Create new questions</a></p>
+      <p><a href="#create" class="link">Create new questions</a></p>
       <hr />
     </header>
     <main class="main">
@@ -26,6 +26,10 @@
         <form class="information-form">
           <fieldset>
             <legend>Please fill in this information to get started:</legend>
+            <p>
+              Fields marked with a<span class="required-marker">*</span>is
+              required to answer.
+            </p>
             <div class="form-group">
               <label for="f-name"
                 >First name <span class="required-marker">*</span></label
@@ -69,9 +73,13 @@
 
         <article class="quiz-container">
           <h1>Quiz</h1>
+          <p class="required-info">
+            Questions marked with a<span class="required-marker">*</span>is
+            required to answer.
+          </p>
           <form id="quiz-form">
-            <div id="error-container"></div>
             <fieldset id="quiz-fieldset" disabled>
+              <div id="error-container"></div>
               <div class="question-container" id="question-container">
                 <!-- question and anwswer divs will be added here with JS-->
               </div>
@@ -87,6 +95,15 @@
       <aside class="leader-board" id="leader-board">
         <!-- Leaderboard i loaded via JS -->
       </aside>
+      <article>
+        <h2>Add new question to the quiz</h2>
+        <p>Please choose what kind of question you would like to create:</p>
+        <div>
+          <p>Single choice</p>
+          <p>Multiple choice</p>
+          <p>Open ended text</p>
+        </div>
+      </article>
     </main>
 
     <script src="./petra.js"></script>
