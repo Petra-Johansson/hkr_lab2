@@ -1,18 +1,34 @@
 document.addEventListener("DOMContentLoaded", () => { 
-
+    const quizForm = document.getElementById("quiz-form");
+    if (quizForm) {
+        quizForm.setAttribute("novalidate", "true");
+    }
 const fNameInput = document.getElementById("f-name");
 const lNameInput = document.getElementById("l-name");
 const emailInput = document.getElementById("email");
 const quizFieldset = document.getElementById("quiz-fieldset");
-const quizForm = document.getElementById("quiz-form");
 let questionData = [];
 
- leaderBoard();
+leaderBoard();
 
-fNameInput.addEventListener("input", formValidation);
-lNameInput.addEventListener("input", formValidation);
-emailInput.addEventListener("input", formValidation);
+fNameInput.addEventListener("input", enableQuiz);
+lNameInput.addEventListener("input", enableQuiz);
+emailInput.addEventListener("input", enableQuiz);
 
+// Function to enable quiz fieldset if all fields are valid
+function enableQuiz() {
+    const isInfoFormValid = fNameInput.checkValidity() &&
+                            lNameInput.checkValidity() &&
+                            emailInput.checkValidity();
+
+    if (isInfoFormValid) {
+        quizFieldset.disabled = false;  
+        console.log("All information fields are valid. Quiz is enabled.");
+    } else {
+        quizFieldset.disabled = true;  
+        console.log("Some information fields are incomplete. Quiz is disabled.");
+    }
+}
 fetchQuestions();
 
 function fetchQuestions() {
@@ -27,6 +43,7 @@ function fetchQuestions() {
 
 // function to display errorMessages where needed
 function showErrorMessage(container, message) {
+    console.log("showErrorMessage called");
     let errorMessage = container.querySelector(".error-message");
 
     if(!errorMessage) {
@@ -37,6 +54,7 @@ function showErrorMessage(container, message) {
 
     errorMessage.innerText = message;
     errorMessage.style.display =  "block";
+    console.log("Error message should be visible now:", message);
 }
 
 function hideError(container) {
@@ -46,17 +64,18 @@ function hideError(container) {
         }
 }
 
-function maxSelection(questionIndex, maxSel, answersDiv) {
-    const checkboxes = document.querySelectorAll(`input[name="question${questionIndex}"]`);
-    checkboxes.forEach((checkbox) => {
-        const selectedBoxes = Array.from(checkboxes).filter(box => box.checked);
-        
-        if(selectedBoxes.length > maxSel) {
-            checkbox.checked = false;
-            showErrorMessage(answersDiv, `Max amount to select is ${maxSel}`);
-        } else {
-           hideError(answersDiv);
-        }
+
+function maxSelection(maxSel, answersDiv) {
+    const checkboxes = answersDiv.querySelectorAll(`input[type="checkbox"]`);
+
+        checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+            const checkedBoxes = answersDiv.querySelectorAll(`input[type="checkbox"]:checked`);
+            if (checkedBoxes.length > maxSel) {
+                // Uncheck the checkbox that was just checked
+                checkbox.checked = false;
+            }
+        });
     });
 }
 
@@ -77,39 +96,52 @@ function displayQuestions(questions) {
     questionTitle.innerText = `${index +1 }. ${questionObject.question}`;
     questionDiv.appendChild(questionTitle);
 
+    const requiredMarker = document.createElement("span");
+    requiredMarker.classList.add("required-marker");
+    requiredMarker.innerText = "*";
+    questionTitle.appendChild(requiredMarker);
+
     // create the div to hold the answers
     const answersDiv = document.createElement("div");
     answersDiv.classList.add("answers");
 
     // add answers/options and display depending on type
     if (questionObject.options.length > 0) {
+        // setting the input type. 
+        // if "correct" answers is fetched as an array, set type to checkbox = multiple answers
+        // if not, it's considerd a single choice questions = radiobutton
+        const inputType = Array.isArray(questionObject.correct) ? "checkbox" : "radio";
+
         questionObject.options.forEach(option => {
             const label = document.createElement("label");
             const input = document.createElement("input");
     
-        // setting the input type. 
-        // if "correct" answers is fetched as an array, set type to checkbox = multiple answers
-        // if not, it's considerd a single choice questions = radiobutton
-        // the option is shown as a string from TextNode
-            input.type = Array.isArray(questionObject.correct) ? "checkbox" : "radio";
+        
+            input.type = inputType;
             input.name = `question${index}`;
             input.value = option;
+
 
             label.appendChild(input);
             label.appendChild(document.createTextNode(option));
             answersDiv.appendChild(label);
         }); 
 
-        // call maxSelection function and set 2 to maxSel
-        if (Array.isArray(questionObject.correct)) {
-            maxSelection(index, 2, answersDiv);
-        }
+        //check to see that checkbox-questions and radiobutton questions are filled in
+        if (inputType === "checkbox") {
+            answersDiv.setAttribute("data-required", "true");
+            maxSelection(2, answersDiv);
+        } else {
+            const firstInput = answersDiv.querySelector('input');
+            if (firstInput) firstInput.required = true;        }
+    
     } else {
         //if correct anwser is fetched as an empty array we set it to be an open ended text entry = text
         const input = document.createElement("input");
         input.type = "text";
         input.name= `question${index}`;
         input.placeholder = "Write your answer";
+        input.required = true;
         answersDiv.appendChild(input);
     }
     // add question and answers div's to question-container
@@ -118,42 +150,99 @@ function displayQuestions(questions) {
     });  
 }
 
-function formValidation() {
-    
+function formValidation() { 
     let isValid = true;
 
-    if(!fNameInput.value.trim()) {
+    if(!fNameInput.checkValidity())  {
         showErrorMessage(fNameInput.parentElement, "First name is required.");
         isValid = false;
     } else{
         hideError(fNameInput.parentElement);
     }
-    if(!lNameInput.value.trim()) {
+    if(!lNameInput.checkValidity())  {
         showErrorMessage(lNameInput.parentElement, "Last name is required.");
         isValid = false;
     } else{
         hideError(lNameInput.parentElement);
     }
-    if(!emailInput.value.trim()) {
+    if(!emailInput.checkValidity())  {
         showErrorMessage(emailInput.parentElement, "Email is required.");
         isValid = false;
     } else{
         hideError(emailInput.parentElement);
     }
     
-    quizFieldset.disabled = !isValid;
+      if (isValid) {
+        quizFieldset.disabled = false;
+        console.log("quizFieldset enabled:", !quizFieldset.disabled);
+    } else {
+        quizFieldset.disabled = true;
+        console.log("quizFieldset disabled:", quizFieldset.disabled);
+    }
+
+    return isValid;
+}
+
+function quizValidation() {
+    
+    let isValid = true;
+    const questions = document.querySelectorAll(".question");
+
+    questions.forEach((question) => {
+        const answersDiv = question.querySelector(".answers");
+        const inputs = answersDiv.querySelectorAll("input");
+
+        if (inputs.length === 0) return;
+
+        const inputType = inputs[0].type;
+        let answered =  false;    
+
+      if (inputType === "checkbox") {
+            const selected = Array.from(inputs).filter(input => input.checked);
+            if (selected.length > 0 && selected.length <= 2) {
+                answered = true;
+            }
+        }  if (inputType === "radio") {
+            answered = Array.from(inputs).some(input => input.checked);
+        
+        } if (inputType === "text") {
+            answered = inputs[0].value.trim() !== "";
+        }
+         if (!answered) {
+            isValid = false;
+        }
+    });
+   const errorContainer = document.getElementById("error-container");
+    if (!isValid) {
+        // Show a generic error message
+        showErrorMessage(errorContainer, "Please make sure to answer all questions.");
+    } else {
+        hideError(errorContainer);
+        console.log("Validation result:", isValid);
+    }
     return isValid;
 }
 
 quizForm.addEventListener("submit", function(event) {
     event.preventDefault();
 
+    const infoForm = document.querySelector(".information-form");
+    if (!infoForm.reportValidity()) {
+        console.log("Information form has HTML5 validation errors.");
+        return;
+    }
     // check that the information form is valid
     if (!formValidation()) {
-        console.log("Form is not valid, submit is blocked.");
+       console.log("Information form is invalid.");
+        return;
+    }
+    if (!quizValidation()) {
+                console.log("Quiz validation failed.");
         return;
     }
 
+
+    console.log("Both validations passed. Submitting form...");
     const userInfo = {
        firstName: fNameInput.value,
        lastName: lNameInput.value,
@@ -196,6 +285,9 @@ quizForm.addEventListener("submit", function(event) {
     document.querySelector(".information-form").reset();
     quizFieldset.disabled = true;
 });
+
+
+
 
 // Show result of the quiz
 function showResult(result) {
@@ -241,6 +333,8 @@ function showResult(result) {
     <p>Date: ${new Date(result.timestamp).toLocaleDateString()}</p>
     `;
 
+    //call leaderBoard function to update with new result
+    leaderBoard();
 }
 
 function leaderBoard() {
@@ -267,9 +361,20 @@ function leaderBoard() {
         // sort the result from highest to lowest score
         quizResults.sort((a, b) => b.score - a.score);
 
-        quizResults.forEach((result) => {
+        quizResults.forEach((result, index) => {
             const userDiv = document.createElement("div");
             userDiv.classList.add("leaderboard-div");
+            
+            // adding an icon for the current leader
+            if (index === 0) {
+                const firstPlaceIcon = document.createElement("i");
+                firstPlaceIcon.classList.add("fas", "fa-crown", "first-place-icon");
+                userDiv.appendChild(firstPlaceIcon);
+            } else {
+                const personIcon = document.createElement("i");
+                personIcon.classList.add("fas", "fa-user", "person-icon");
+                userDiv.appendChild(personIcon)
+            }
 
             const userName = document.createElement("p");
             userName.classList.add("user-name");
