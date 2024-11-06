@@ -15,6 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
     lNameInput.addEventListener("input", enableQuiz);
     emailInput.addEventListener("input", enableQuiz);
 
+    fetchQuestions();
+
+
+
     // Function to enable quiz fieldset if all fields are valid
     function enableQuiz() {
         const isInfoFormValid = fNameInput.checkValidity() &&
@@ -29,14 +33,17 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log("Some information fields are incomplete. Quiz is disabled.");
         }
     }
-    fetchQuestions();
+
 
     function fetchQuestions() {
         fetch('./questions.json')
             .then((res) => res.json())
             .then((data) => {
-                questionData = data.questions;
-                displayQuestions(data.questions);
+                //questionData = data.questions;
+                const predefinedQuestions = data.questions;
+                const userQuestions = JSON.parse(localStorage.getItem('userQuestions')) || [];
+                questionData = [...predefinedQuestions, ...userQuestions];
+                displayQuestions(questionData);
             })
             .catch((error) => console.log("Could not fetch data:", error));
     };
@@ -116,11 +123,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     const label = document.createElement("label");
                     const input = document.createElement("input");
 
-
                     input.type = inputType;
                     input.name = `question${index}`;
                     input.value = option;
-
 
                     label.appendChild(input);
                     label.appendChild(document.createTextNode(option));
@@ -344,10 +349,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             inputs.forEach(input => {
-                if (input.type === "text") { // Check if the input is a text input
+                if (input.type === "text") {
 
                     const userInput = input.value.trim().toLowerCase();
-                    console.log("TEXTBOX ANSWER: ", userInput);
 
                     const feedback = document.createElement("p");
                     feedback.classList.add("feedback");
@@ -498,3 +502,67 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+
+
+
+/* TO ADD QUESTION */
+const questionForm = document.getElementById('question-form');
+const questionTypeSelect = document.getElementById('question-type');
+const optionsContainer = document.getElementById('options-container');
+const optionTextInput = document.getElementById('option-text');
+const addOptionButton = document.getElementById('add-option');
+const optionsList = document.getElementById('options-list');
+
+let optionsArray = [];
+
+questionTypeSelect.addEventListener('change', () => {
+    optionsContainer.style.display = questionTypeSelect.value === "text" ? "none" : "block";
+    if (questionTypeSelect.value === 'text') {
+        optionsArray = []; // Clear options for open-ended type
+        optionsList.innerHTML = ''; // Clear displayed options
+    }
+});
+
+addOptionButton.addEventListener('click', () => {
+    const optionValue = optionTextInput.value.trim();
+    if (optionValue) {
+        optionsArray.push(optionValue);
+        const optionDiv = document.createElement("div");
+        optionDiv.innerText = optionValue;
+        optionsList.appendChild(optionDiv);
+        optionTextInput.value = "";
+    }
+});
+
+questionForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const questionType = questionTypeSelect.value;
+    const questionText = document.getElementById("question-text").value.trim();
+    const correctAnswer = document.getElementById("correct-answer").value.trim().toLowerCase();
+
+    if (!questionText || (questionType !== "text" && optionsArray.length === 0)) {
+        showErrorMessage("Please complete all fields before submitting");
+        return;
+    }
+    const newQuestion = {
+        question: questionText,
+        options: questionType === "text" ? [] : optionsArray,
+        correct: questionType === "checkbox" ? correctAnswer.split(',').map(answer => answer.trim()) : correctAnswer
+    };
+
+    //save to localstorage as userQuestions
+    let storedQuestions = JSON.parse(localStorage.getItem("userQuestions")) || [];
+    storedQuestions.push(newQuestion);
+    localStorage.setItem("userQuestions", JSON.stringify(storedQuestions));
+
+    // empty the form after saving to localstorage
+    questionForm.reset();
+    optionsArray = [];
+    optionsList.innerHTML = "";
+
+    fetchQuestions();
+
+})
+
+

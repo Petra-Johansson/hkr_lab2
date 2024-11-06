@@ -18,7 +18,7 @@
         You can either answer some preset questions or, if you would like too,
         create a couple of more questions!
       </p>
-      <p><a href="#create" class="link">Create new questions</a></p>
+      <p><a href="#create" class="link">Add a new question!</a></p>
       <hr />
     </header>
     <main class="main">
@@ -95,14 +95,42 @@
       <aside class="leader-board" id="leader-board">
         <!-- Leaderboard i loaded via JS -->
       </aside>
-      <article>
-        <h2>Add new question to the quiz</h2>
-        <p>Please choose what kind of question you would like to create:</p>
-        <div>
-          <p>Single choice</p>
-          <p>Multiple choice</p>
-          <p>Open ended text</p>
-        </div>
+
+      <article id="create">
+        <h2>Add a new question to the quiz</h2>
+        <form class="question-form" id="question-form">
+          <label for="question-type">Choose question type:</label>
+          <select id="question-type">
+            <option value="radio">Radiobutton (Single choice)</option>
+            <option value="checkbox">Checkbox (Multiple answers)</option>
+            <option value="text">Open-ended (Text input)</option>
+          </select>
+
+          <label for="question-text">Write the Question:</label>
+          <input
+            type="text"
+            id="question-text"
+            name="question-text"
+            required
+            placeholder="Question?"
+          />
+          <div id="options-container" style="display: none">
+            <label for="option-text">Option:</label>
+            <input type="text" id="option-text" />
+            <button type="button" id="add-option">Add Option</button>
+          </div>
+          <div id="options-list"></div>
+
+          <label for="correct-answer">Correct Answer(s):</label>
+          <input
+            type="text"
+            id="correct-answer"
+            placeholder="Enter correct answer(s)"
+            required
+          />
+
+          <button type="submit">Add Question</button>
+        </form>
       </article>
     </main>
 
