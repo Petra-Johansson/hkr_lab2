@@ -1,7 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
     const quizForm = document.getElementById("quiz-form");
+    const questionForm = document.getElementById("question-form");
+
     if (quizForm) {
         quizForm.setAttribute("novalidate", "true");
+    }
+    if (questionForm) {
+        questionForm.setAttribute("novalidate", "true");
     }
     const fNameInput = document.getElementById("f-name");
     const lNameInput = document.getElementById("l-name");
@@ -27,10 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (isInfoFormValid) {
             quizFieldset.disabled = false;
-            console.log("All information fields are valid. Quiz is enabled.");
         } else {
             quizFieldset.disabled = true;
-            console.log("Some information fields are incomplete. Quiz is disabled.");
         }
     }
 
@@ -50,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // function to display errorMessages where needed
     function showErrorMessage(container, message) {
-        console.log("showErrorMessage called");
         let errorMessage = container.querySelector(".error-message");
 
         if (!errorMessage) {
@@ -61,7 +63,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         errorMessage.innerText = message;
         errorMessage.style.display = "block";
-        console.log("Error message should be visible now:", message);
     }
 
     function hideError(container) {
@@ -179,10 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (isValid) {
             quizFieldset.disabled = false;
-            console.log("quizFieldset enabled:", !quizFieldset.disabled);
         } else {
             quizFieldset.disabled = true;
-            console.log("quizFieldset disabled:", quizFieldset.disabled);
         }
 
         return isValid;
@@ -233,17 +232,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const infoForm = document.querySelector(".information-form");
         if (!infoForm.reportValidity()) {
-            console.log("Information form has HTML5 validation errors.");
             return;
         }
         // check that the information form is valid
         if (!formValidation()) {
-            console.log("Information form is invalid.");
             return;
         }
         // check that the quiz form is valid
         if (!quizValidation()) {
-            console.log("Quiz validation failed.");
             return;
         }
 
@@ -512,14 +508,18 @@ const optionsContainer = document.getElementById('options-container');
 const optionTextInput = document.getElementById('option-text');
 const addOptionButton = document.getElementById('add-option');
 const optionsList = document.getElementById('options-list');
+const correctAnswerInput = document.getElementById('correct-answer');
 
 let optionsArray = [];
 
 questionTypeSelect.addEventListener('change', () => {
-    optionsContainer.style.display = questionTypeSelect.value === "text" ? "none" : "block";
-    if (questionTypeSelect.value === 'text') {
-        optionsArray = []; // Clear options for open-ended type
-        optionsList.innerHTML = ''; // Clear displayed options
+    if (questionTypeSelect.value === 'radio' || questionTypeSelect.value === 'checkbox') {
+        optionsContainer.style.display = "block";
+    } else {
+        optionsContainer.style.display = "none";
+        optionsArray = [];
+        optionsList.innerHTML = '';
+        correctAnswerInput.value = '';
     }
 });
 
@@ -527,10 +527,12 @@ addOptionButton.addEventListener('click', () => {
     const optionValue = optionTextInput.value.trim();
     if (optionValue) {
         optionsArray.push(optionValue);
-        const optionDiv = document.createElement("div");
-        optionDiv.innerText = optionValue;
-        optionsList.appendChild(optionDiv);
-        optionTextInput.value = "";
+
+        const optionItem = document.createElement('div');
+        optionItem.textContent = optionValue;
+        optionsList.appendChild(optionItem);
+
+        optionTextInput.value = '';
     }
 });
 
@@ -542,9 +544,27 @@ questionForm.addEventListener("submit", (event) => {
     const correctAnswer = document.getElementById("correct-answer").value.trim().toLowerCase();
 
     if (!questionText || (questionType !== "text" && optionsArray.length === 0)) {
-        showErrorMessage("Please complete all fields before submitting");
+        alert("Please complete all fields before submitting");
         return;
     }
+    if (questionType === 'radio') {
+        if (!optionsArray.includes(correctAnswer)) {
+            alert("The correct answer must be one of the added options.");
+            return;
+        }
+    } else if (questionType === 'checkbox') {
+        const correctAnswers = correctAnswer.split(',').map(ans => ans.trim());
+        if (correctAnswers.length !== 2) {
+            alert("Please specify two correct answers for the checkbox question.");
+            return;
+        }
+        if (!correctAnswers.every(ans => optionsArray.includes(ans))) {
+            alert("All correct answers must be among the added options.");
+            return;
+        }
+        correctAnswer = correctAnswers;
+    }
+
     const newQuestion = {
         question: questionText,
         options: questionType === "text" ? [] : optionsArray,
@@ -564,5 +584,4 @@ questionForm.addEventListener("submit", (event) => {
     fetchQuestions();
 
 })
-
 

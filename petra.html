@@ -18,7 +18,8 @@
         You can either answer some preset questions or, if you would like too,
         create a couple of more questions!
       </p>
-      <p><a href="#create" class="link">Add a new question!</a></p>
+
+      <p><a href="#create" class="link">&lt; Add a new question! &gt;</a></p>
       <hr />
     </header>
     <main class="main">
@@ -92,53 +93,59 @@
           <!-- Result is loaded via JS -->
         </div>
       </div>
-      <aside class="leader-board" id="leader-board">
-        <!-- Leaderboard i loaded via JS -->
-      </aside>
+      <aside class="aside">
+        <section class="leader-board" id="leader-board">
+          <!-- Leaderboard i loaded via JS -->
+        </section>
 
-      <article id="create" class="create-article">
-        <h2>Add a new question to the quiz</h2>
-        <form class="question-form" id="question-form">
-          <fieldset>
-            <div class="form-group">
-              <label for="question-type">Choose question type:</label>
-              <select id="question-type">
-                <option value="radio">Radiobutton (Single choice)</option>
-                <option value="checkbox">Checkbox (Multiple answers)</option>
-                <option value="text">Open-ended (Text input)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="question-text">Write the Question:</label>
-              <input
-                type="text"
-                id="question-text"
-                name="question-text"
-                required
-                placeholder="Question?"
-              />
-            </div>
-            <div class="form-group">
-              <div id="options-container" style="display: none">
-                <label for="option-text">Option:</label>
-                <input type="text" id="option-text" />
-                <button type="button" id="add-option">Add Option</button>
+        <article id="create" class="create-article">
+          <hr />
+          <h2>Add a new question to the quiz</h2>
+          <form class="question-form" id="question-form">
+            <fieldset>
+              <div class="form-group">
+                <label for="question-type">Choose question type:</label>
+                <select id="question-type">
+                  <option hidden value=""></option>
+                  <option value="radio">Radiobutton (Single choice)</option>
+                  <option value="checkbox">Checkbox (Multiple answers)</option>
+                  <option value="text">Open-ended (Text input)</option>
+                </select>
               </div>
-              <div id="options-list"></div>
-            </div>
-            <div class="form-group">
-              <label for="correct-answer">Correct Answer(s):</label>
-              <input
-                type="text"
-                id="correct-answer"
-                placeholder="Enter correct answer(s)"
-                required
-              />
-            </div>
-            <button type="submit" class="submit-btn">Add Question</button>
-          </fieldset>
-        </form>
-      </article>
+              <div class="form-group">
+                <div id="error-container"></div>
+                <label for="question-text">Write the Question:</label>
+                <input
+                  type="text"
+                  id="question-text"
+                  name="question-text"
+                  required
+                  placeholder="Question?"
+                />
+              </div>
+              <div class="form-group">
+                <div id="error-container"></div>
+                <div id="options-container" style="display: none">
+                  <label for="option-text">Option:</label>
+                  <input type="text" id="option-text" />
+                  <button type="button" id="add-option">Add Option</button>
+                </div>
+                <div id="options-list"></div>
+              </div>
+              <div class="form-group">
+                <label for="correct-answer">Correct Answer(s):</label>
+                <input
+                  type="text"
+                  id="correct-answer"
+                  placeholder="Enter correct answer(s)"
+                  required
+                />
+              </div>
+              <button type="submit" class="submit-btn">Add Question</button>
+            </fieldset>
+          </form>
+        </article>
+      </aside>
     </main>
     <footer class="footer">
       <a href="https://github.com/Petra-Johansson/hkr_lab2" class="link"

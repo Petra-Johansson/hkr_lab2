@@ -21,6 +21,7 @@ html {
 body {
   background-image: linear-gradient(
     to bottom right,
+    var(--purple),
     var(--primary-light),
     var(--purple)
   );
@@ -46,6 +47,9 @@ input[type="checkbox"],
 input[type="radio"] {
   cursor: pointer;
 }
+a {
+  text-decoration: none;
+}
 
 fieldset {
   border: none;
@@ -68,13 +72,15 @@ legend {
   margin-bottom: 2em;
 }
 .link {
+  font-size: 1.2em;
   padding: 1em;
   color: var(--primary-dark);
   margin-bottom: 2em;
 }
 .link:hover {
-  font-size: 1.2em;
+  font-size: 1.4em;
 }
+
 .error-message {
   color: red;
   margin: 1em;
@@ -88,8 +94,7 @@ legend {
 /* FORM and QUIZ */
 .information-form,
 .quiz-container,
-.result-container,
-.create-article {
+.result-container {
   width: 70%;
   margin: 1em auto;
 }
@@ -203,7 +208,7 @@ select {
 /* to add question */
 .create-article {
   h2 {
-    margin-bottom: 0.8em;
+    margin: 1em 0;
   }
 
   label {
@@ -223,5 +228,9 @@ select {
   .main {
     grid-template-columns: 1fr;
     width: 100%;
+  }
+
+  .create-article {
+    padding-left: 2em;
   }
 }

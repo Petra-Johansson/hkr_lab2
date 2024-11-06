@@ -1,29 +1,29 @@
 {
     "questions": [
     {
-        "question": "1",
-        "options": ["Nej","Ja","Kanske","Tveksamt"],
-        "correct": "Ja"
+        "question": "According to the Roman myth, who or whom built Rome?",
+        "options": ["Remulus","Julius Caesar","Emporor Augustus", "Romulus"],
+        "correct": ["Remulus", "Romulus"]
     },
     {
-        "question": "2",
-        "options": ["1","2","4","8"],
-        "correct": ["4", "8"]
+        "question": "Which of the following are programming languages?",
+        "options": ["HTML","Python","Java","CSS"],
+        "correct": ["Python", "Java"]
     },
     {
-        "question": "3",
-        "options": ["Stockholm","Malmö","Ystad","Happaranda"],
-        "correct": "Ystad"
+        "question": "What is the smallest planet in our solar system?",
+        "options": ["Mars","Venus","Mercury","Jupiter"],
+        "correct": "Mercury"
     },
     {
-        "question": "4",
-        "options": ["Moln","Regn","Sol","Åska"],
-        "correct": "Sol"
+        "question": "Which chemical element has the symbol 'O'?",
+        "options": ["Osmium","Oxygen","Opium","Ozone"],
+        "correct": "Oxygen"
     },
     {
-        "question": "5",
+        "question": "In the pop culture fiction 'A Hitchhikers Guide to the Galaxy', what's the answer to everything?",
         "options": [],
-        "correct": ["Julafton"]
+        "correct": "42"
     }
 ]
 }
