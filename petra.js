@@ -26,16 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Function to enable quiz fieldset if all fields are valid
     function enableQuiz() {
+        const emailValid = emailInput.checkValidity() && new RegExp(emailInput.pattern).test(emailInput.value);
         const isInfoFormValid = fNameInput.checkValidity() &&
             lNameInput.checkValidity() &&
-            emailInput.checkValidity();
+            emailValid;
 
-        if (isInfoFormValid) {
-            quizFieldset.disabled = false;
-        } else {
-            quizFieldset.disabled = true;
-        }
+        quizFieldset.disabled = !isInfoFormValid;
     }
+
 
 
     function fetchQuestions() {
@@ -417,11 +415,11 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("quizResults", JSON.stringify(quizResults));
 
         resultContainer.innerHTML = `
-    <h2>Your result:</h2>
-    <h3>${result.userInfo.firstName} ${result.userInfo.lastName}</h3>
-    <p>You got ${score} points out of maxmimum: ${maxScore}, by answering all ${questionData.length} questions!</p>
-    <p>Date: ${new Date(result.timestamp).toLocaleDateString()}</p>
-    `;
+            <h2>Your result:</h2>
+            <h3>${result.userInfo.firstName} ${result.userInfo.lastName}</h3>
+            <p>You got ${score} points out of maxmimum: ${maxScore}, by answering all ${questionData.length} questions!</p>
+            <p>Date: ${new Date(result.timestamp).toLocaleDateString()}</p>
+            `;
 
         //call leaderBoard function to update with new result
         leaderBoard();
@@ -446,55 +444,58 @@ document.addEventListener("DOMContentLoaded", () => {
     function leaderBoard() {
         let quizResults = JSON.parse(localStorage.getItem("quizResults")) || [];
 
+        if (quizResults.length > 0) {
+            const leaderBoard = document.getElementById("leader-board");
+            leaderBoard.innerHTML = '';
 
-        const leaderBoard = document.getElementById("leader-board");
-        leaderBoard.innerHTML = '';
-
-        const leaderBoardTitle = document.createElement("h3");
-        leaderBoardTitle.innerText = "Leaderboard";
-        leaderBoard.appendChild(leaderBoardTitle);
+            const leaderBoardTitle = document.createElement("h3");
+            leaderBoardTitle.innerText = "Leaderboard";
+            leaderBoard.appendChild(leaderBoardTitle);
 
 
-        const boardDetails = document.createElement("p");
-        boardDetails.classList.add("board-details");
-        boardDetails.innerText = "Name";
-        leaderBoard.appendChild(boardDetails);
+            const boardDetails = document.createElement("p");
+            boardDetails.classList.add("board-details");
+            boardDetails.innerText = "Name";
+            leaderBoard.appendChild(boardDetails);
 
-        const scoreSpan = document.createElement("span");
-        scoreSpan.innerText = "Score";
-        boardDetails.appendChild(scoreSpan);
+            const scoreSpan = document.createElement("span");
+            scoreSpan.innerText = "Score";
+            boardDetails.appendChild(scoreSpan);
 
-        // sort the result from highest to lowest score
-        quizResults.sort((a, b) => b.score - a.score);
+            // sort the result from highest to lowest score
+            quizResults.sort((a, b) => b.score - a.score);
 
-        quizResults.forEach((result, index) => {
+            quizResults.forEach((result, index) => {
 
-            const userDiv = document.createElement("div");
-            userDiv.classList.add("leaderboard-div");
+                const userDiv = document.createElement("div");
+                userDiv.classList.add("leaderboard-div");
 
-            // adding an icon for the current leader
-            if (index === 0) {
-                const firstPlaceIcon = document.createElement("i");
-                firstPlaceIcon.classList.add("fas", "fa-crown", "first-place-icon");
-                userDiv.appendChild(firstPlaceIcon);
-            } else {
-                const personIcon = document.createElement("i");
-                personIcon.classList.add("fas", "fa-user", "person-icon");
-                userDiv.appendChild(personIcon)
-            }
+                // adding an icon for the current leader
+                if (index === 0) {
+                    const firstPlaceIcon = document.createElement("i");
+                    firstPlaceIcon.classList.add("fas", "fa-crown", "first-place-icon");
+                    userDiv.appendChild(firstPlaceIcon);
+                } else {
+                    const personIcon = document.createElement("i");
+                    personIcon.classList.add("fas", "fa-user", "person-icon");
+                    userDiv.appendChild(personIcon)
+                }
 
-            const userName = document.createElement("p");
-            userName.classList.add("user-name");
-            userName.innerText = `${result.userInfo.firstName} ${result.userInfo.lastName}`;
-            userDiv.appendChild(userName);
+                const userName = document.createElement("p");
+                userName.classList.add("user-name");
+                userName.innerText = `${result.userInfo.firstName} ${result.userInfo.lastName}`;
+                userDiv.appendChild(userName);
 
-            const userScore = document.createElement("p");
-            userScore.classList.add("user-score");
-            userScore.innerText = `${result.score}`;
-            userDiv.appendChild(userScore);
+                const userScore = document.createElement("p");
+                userScore.classList.add("user-score");
+                userScore.innerText = `${result.score}`;
+                userDiv.appendChild(userScore);
 
-            leaderBoard.appendChild(userDiv);
-        })
+                leaderBoard.appendChild(userDiv);
+            })
+        } else {
+            document.getElementById("leader-board").style.display = 'none';
+        }
     }
 
 });
