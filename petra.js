@@ -22,18 +22,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fetchQuestions();
 
-
-
     // Function to enable quiz fieldset if all fields are valid
     function enableQuiz() {
-        const emailValid = emailInput.checkValidity() && new RegExp(emailInput.pattern).test(emailInput.value);
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        const emailValid = emailInput.checkValidity() && emailPattern.test(emailInput.value);
         const isInfoFormValid = fNameInput.checkValidity() &&
             lNameInput.checkValidity() &&
             emailValid;
 
         quizFieldset.disabled = !isInfoFormValid;
     }
-
 
 
     function fetchQuestions() {
@@ -415,7 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("quizResults", JSON.stringify(quizResults));
 
         resultContainer.innerHTML = `
-            <h2>Your result:</h2>
+            <h2>Good job!</h2>
             <h3>${result.userInfo.firstName} ${result.userInfo.lastName}</h3>
             <p>You got ${score} points out of maxmimum: ${maxScore}, by answering all ${questionData.length} questions!</p>
             <p>Date: ${new Date(result.timestamp).toLocaleDateString()}</p>
@@ -498,91 +496,97 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-});
 
 
 
-/* TO ADD QUESTION */
-const questionForm = document.getElementById('question-form');
-const questionTypeSelect = document.getElementById('question-type');
-const optionsContainer = document.getElementById('options-container');
-const optionTextInput = document.getElementById('option-text');
-const addOptionButton = document.getElementById('add-option');
-const optionsList = document.getElementById('options-list');
-const correctAnswerInput = document.getElementById('correct-answer');
 
-let optionsArray = [];
+    /* TO ADD QUESTION */
 
-questionTypeSelect.addEventListener('change', () => {
-    if (questionTypeSelect.value === 'radio' || questionTypeSelect.value === 'checkbox') {
-        optionsContainer.style.display = "block";
-    } else {
-        optionsContainer.style.display = "none";
+    const questionTypeSelect = document.getElementById('question-type');
+    const optionsContainer = document.getElementById('options-container');
+    const optionTextInput = document.getElementById('option-text');
+    const addOptionButton = document.getElementById('add-option');
+    const optionsList = document.getElementById('options-list');
+    const correctAnswerInput = document.getElementById('correct-answer');
+
+    let optionsArray = [];
+
+    questionTypeSelect.addEventListener('change', () => {
+        if (questionTypeSelect.value === 'radio' || questionTypeSelect.value === 'checkbox') {
+            optionsContainer.style.display = "block";
+        } else {
+            optionsContainer.style.display = "none";
+            optionsArray = [];
+            optionsList.innerHTML = '';
+            correctAnswerInput.value = '';
+        }
+    });
+
+    addOptionButton.addEventListener('click', () => {
+        const optionValue = optionTextInput.value.trim();
+        if (optionValue) {
+            optionsArray.push(optionValue);
+
+            const optionItem = document.createElement('p');
+            optionItem.textContent = optionValue;
+            optionsList.appendChild(optionItem);
+
+            optionTextInput.value = '';
+        }
+    });
+
+    questionForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const questionType = questionTypeSelect.value;
+        const questionText = document.getElementById("question-text").value.trim();
+        let inputCorrectAnswer = document.getElementById("correct-answer").value;
+
+        if (typeof inputCorrectAnswer !== 'string') {
+            alert('Error: correct answer input is not a valid string.');
+            return;
+        }
+
+        inputCorrectAnswer = inputCorrectAnswer.trim().toLowerCase();
+
+        if (!questionText || (questionType !== "text" && optionsArray.length === 0)) {
+            alert("Please complete all fields before submitting");
+            return;
+        }
+        if (questionType === 'radio') {
+            if (!optionsArray.includes(inputCorrectAnswer)) {
+                alert("The correct answer must be one of the added options.");
+                return;
+            }
+        } else if (questionType === 'checkbox') {
+            const correctAnswers = inputCorrectAnswer.split(',').map(ans => ans.trim());
+            if (correctAnswers.length < 2) {
+                alert("Please specify two correct answers for the checkbox question.");
+                return;
+            }
+            if (!correctAnswers.every(ans => optionsArray.includes(ans))) {
+                alert("All correct answers must be among the added options.");
+                return;
+            }
+            inputCorrectAnswer = correctAnswers;
+        }
+
+        const newQuestion = {
+            question: questionText,
+            options: questionType === "text" ? [] : optionsArray,
+            correct: questionType === "checkbox" ? inputCorrectAnswer : inputCorrectAnswer
+        };
+
+        // Save to localStorage
+        let storedQuestions = JSON.parse(localStorage.getItem("userQuestions")) || [];
+        storedQuestions.push(newQuestion);
+        localStorage.setItem("userQuestions", JSON.stringify(storedQuestions));
+
+        // Clear the form after saving to localStorage
+        questionForm.reset();
         optionsArray = [];
-        optionsList.innerHTML = '';
-        correctAnswerInput.value = '';
-    }
+        optionsList.innerHTML = "";
+
+        fetchQuestions();
+    });
 });
-
-addOptionButton.addEventListener('click', () => {
-    const optionValue = optionTextInput.value.trim();
-    if (optionValue) {
-        optionsArray.push(optionValue);
-
-        const optionItem = document.createElement('div');
-        optionItem.textContent = optionValue;
-        optionsList.appendChild(optionItem);
-
-        optionTextInput.value = '';
-    }
-});
-
-questionForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    const questionType = questionTypeSelect.value;
-    const questionText = document.getElementById("question-text").value.trim();
-    const correctAnswer = document.getElementById("correct-answer").value.trim().toLowerCase();
-
-    if (!questionText || (questionType !== "text" && optionsArray.length === 0)) {
-        alert("Please complete all fields before submitting");
-        return;
-    }
-    if (questionType === 'radio') {
-        if (!optionsArray.includes(correctAnswer)) {
-            alert("The correct answer must be one of the added options.");
-            return;
-        }
-    } else if (questionType === 'checkbox') {
-        const correctAnswers = correctAnswer.split(',').map(ans => ans.trim());
-        if (correctAnswers.length !== 2) {
-            alert("Please specify two correct answers for the checkbox question.");
-            return;
-        }
-        if (!correctAnswers.every(ans => optionsArray.includes(ans))) {
-            alert("All correct answers must be among the added options.");
-            return;
-        }
-        correctAnswer = correctAnswers;
-    }
-
-    const newQuestion = {
-        question: questionText,
-        options: questionType === "text" ? [] : optionsArray,
-        correct: questionType === "checkbox" ? correctAnswer.split(',').map(answer => answer.trim()) : correctAnswer
-    };
-
-    //save to localstorage as userQuestions
-    let storedQuestions = JSON.parse(localStorage.getItem("userQuestions")) || [];
-    storedQuestions.push(newQuestion);
-    localStorage.setItem("userQuestions", JSON.stringify(storedQuestions));
-
-    // empty the form after saving to localstorage
-    questionForm.reset();
-    optionsArray = [];
-    optionsList.innerHTML = "";
-
-    fetchQuestions();
-
-})
-

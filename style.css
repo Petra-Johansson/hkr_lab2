@@ -130,31 +130,45 @@ select {
   transform: scale(1.5);
 }
 .submit-btn,
-.restart-btn {
+.restart-btn,
+.add-option-btn {
+  font-size: 1em;
   letter-spacing: 0.8px;
   margin-top: 2em;
   padding: 0.8em;
   color: var(--primary-light);
   border: none;
+  border-radius: 16px;
   text-transform: uppercase;
   box-shadow: 1px 3px 2px 1px var(--primary-dark);
 }
 .submit-btn {
   background-color: var(--purple);
+  transition: all 0.5s ease-in-out;
 }
 .submit-btn:hover {
-  background-color: var(--primary-light);
-  color: var(--purple);
+  background-image: linear-gradient(
+    to bottom right,
+    var(--primary-light),
+    var(--purple)
+  );
+  transition: all 0.5s ease-in-out;
 }
 
 .restart-btn {
   background-color: var(--green);
+  transition: all 0.5s ease-in-out;
+
+  &:hover {
+    background-image: linear-gradient(
+      to bottom right,
+      var(--primary-light),
+      var(--green)
+    );
+    transition: all 0.5s ease-in-out;
+  }
 }
 
-.restart-btn:hover {
-  background-color: var(--primary-light);
-  color: var(--green);
-}
 /* RESULT and LEADERBOARD */
 
 .feedback {
@@ -189,12 +203,12 @@ select {
     margin-top: 1.5em;
     text-transform: uppercase;
     display: grid;
-    grid-template-columns: 60% auto;
+    grid-template-columns: 70% auto;
     border-bottom: 1px solid var(--primary-light);
   }
   .leaderboard-div {
     display: grid;
-    grid-template-columns: 10% 50% auto;
+    grid-template-columns: 10% 60% auto;
     margin-top: 1em;
     text-transform: capitalize;
   }
@@ -208,12 +222,31 @@ select {
 /* to add question */
 .create-article {
   h2 {
-    margin: 1em 0;
+    margin: 0.6em 0;
   }
 
   label {
     margin: 0.6em 0;
     font-size: 1em;
+  }
+
+  .add-option-btn {
+    background-color: var(--purple);
+    width: fit-content;
+    transition: all 0.5s ease-in-out;
+
+    &:hover {
+      background-image: linear-gradient(
+        to bottom right,
+        var(--primary-light),
+        var(--purple)
+      );
+      transition: all 0.5s ease-in-out;
+    }
+  }
+
+  .options-list p {
+    padding: 0.3em;
   }
 }
 .footer {
@@ -225,12 +258,34 @@ select {
 }
 
 @media only screen and (max-width: 800px) {
+  html {
+    font-size: 12px;
+  }
   .main {
     grid-template-columns: 1fr;
     width: 100%;
   }
 
+  .leader-board {
+    padding: 1em;
+    width: 80%;
+    margin: 1em auto;
+
+    .board-details {
+      grid-template-columns: 75% auto;
+    }
+    .leaderboard-div {
+      grid-template-columns: 10% 65% auto;
+    }
+  }
   .create-article {
-    padding-left: 2em;
+    margin: 1em auto;
+    width: 70%;
+  }
+
+  input,
+  select {
+    font-size: 0.8em;
+    max-width: 40ch;
   }
 }
